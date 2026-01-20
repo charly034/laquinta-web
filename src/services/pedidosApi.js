@@ -1,6 +1,6 @@
 // src/services/pedidosApi.js
 
-const API_BASE = "https://laquintaapp-laquinta-api.gzsmus.easypanel.host";
+const API_BASE = "https://api.iamdz.cloud";
 
 export async function fetchPedidos({ signal } = {}) {
   const url = `${API_BASE}/pedidos`;
