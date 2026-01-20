@@ -1,8 +1,7 @@
 /* eslint-disable no-useless-escape */
 import { useEffect, useMemo, useState } from "react";
 import "./App.css";
-
-const API_BASE = import.meta.env.VITE_API_BASE;
+import { fetchPedidos } from "./services/pedidosApi";
 
 // YYYY-MM-DD en Mendoza
 function todayYMD_Mendoza() {
@@ -54,99 +53,83 @@ export default function App() {
   const [pedidos, setPedidos] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-  const [query, setQuery] = useState("");
-  const [autoRefresh, setAutoRefresh] = useState(true);
-  const [soloHoy, setSoloHoy] = useState(true);
 
-  async function cargarPedidos() {
+  const [soloHoy, setSoloHoy] = useState(true);
+  const [autoRefresh, setAutoRefresh] = useState(true);
+
+  const hoyYMD = todayYMD_Mendoza();
+  const hoyLabel = todayLabelEsAR();
+
+  // Carga real (con abort controller)
+  async function cargarPedidos({ signal } = {}) {
     try {
       setError("");
-      setLoading(true);
-
-      const res = await fetch(`${API_BASE}/pedidos`);
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
-
-      const data = await res.json();
+      const data = await fetchPedidos({ signal });
       setPedidos(Array.isArray(data) ? data : []);
-    } catch (err) {
-      console.error(err);
-      setError("No se pudieron cargar los pedidos. Revisá la API / CORS.");
+    } catch (e) {
+      if (e?.name !== "AbortError") {
+        console.error("cargarPedidos error:", e);
+        setError(e?.message || "No se pudieron cargar los pedidos.");
+      }
     } finally {
       setLoading(false);
     }
   }
 
+  // carga inicial
   useEffect(() => {
-    cargarPedidos();
+    const controller = new AbortController();
+    setLoading(true);
+    cargarPedidos({ signal: controller.signal });
+    return () => controller.abort();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  // auto refresh cada 15s
   useEffect(() => {
     if (!autoRefresh) return;
-    const interval = setInterval(cargarPedidos, 15000);
-    return () => clearInterval(interval);
+
+    let controller = new AbortController();
+
+    const tick = () => {
+      // cancela si había una request colgada
+      controller.abort();
+      controller = new AbortController();
+      cargarPedidos({ signal: controller.signal });
+    };
+
+    const id = setInterval(tick, 15000);
+
+    return () => {
+      controller.abort();
+      clearInterval(id);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [autoRefresh]);
 
-  const hoyYMD = todayYMD_Mendoza();
-  const hoyLabel = todayLabelEsAR();
-
   const pedidosFiltrados = useMemo(() => {
-    const term = query.trim().toLowerCase();
-
-    return pedidos
-      .filter((p) => {
-        if (!soloHoy) return true;
-        return normalizeToYMD(p.fecha) === hoyYMD;
-      })
-      .filter((p) => {
-        if (!term) return true;
-        const texto = [
-          p.id,
-          p.fecha,
-          p.hora,
-          p.telefono,
-          p.nombre,
-          p.direccion,
-          p.modalidad,
-          p.productos,
-        ]
-          .filter(Boolean)
-          .join(" ")
-          .toLowerCase();
-
-        return texto.includes(term);
-      });
-  }, [pedidos, query, soloHoy, hoyYMD]);
+    const list = Array.isArray(pedidos) ? pedidos : [];
+    if (!soloHoy) return list;
+    return list.filter((p) => normalizeToYMD(p.fecha) === hoyYMD);
+  }, [pedidos, soloHoy, hoyYMD]);
 
   const totalHoy = useMemo(() => {
-    return pedidos.filter((p) => normalizeToYMD(p.fecha) === hoyYMD).length;
+    const list = Array.isArray(pedidos) ? pedidos : [];
+    return list.filter((p) => normalizeToYMD(p.fecha) === hoyYMD).length;
   }, [pedidos, hoyYMD]);
 
   return (
     <div className="page">
-      {/* TOPBAR (logo - título centrado - acciones) */}
-      <div className="topbar">
-        <div className="brand">
-          <img className="brandLogo" src="/logo.jpg" alt="La Quinta" />
-        </div>
+      <header className="header">
+        <h1>La Quinta · Pedidos</h1>
 
-        <div className="centerTitle">
-          <h1 className="title">La Quinta · Pedidos</h1>
-          <p className="subtitle">
-            {soloHoy ? (
-              <>
-                Mostrando <b>solo hoy</b> ({hoyLabel})
-              </>
-            ) : (
-              <>
-                Mostrando <b>todos</b> los pedidos
-              </>
-            )}
-          </p>
-        </div>
-
-        <div className="actions">
-          <button className="btn btn-ghost" onClick={cargarPedidos}>
+        <div className="controls">
+          <button
+            onClick={() => {
+              setLoading(true);
+              cargarPedidos();
+            }}
+          >
             Refrescar
           </button>
 
@@ -156,7 +139,7 @@ export default function App() {
               checked={soloHoy}
               onChange={(e) => setSoloHoy(e.target.checked)}
             />
-            <span>Solo hoy</span>
+            Solo hoy {soloHoy ? `(${hoyLabel})` : ""}
           </label>
 
           <label className="toggle">
@@ -165,57 +148,37 @@ export default function App() {
               checked={autoRefresh}
               onChange={(e) => setAutoRefresh(e.target.checked)}
             />
-            <span>Auto (15s)</span>
+            Auto (15s)
           </label>
+
+          <span className="counter">
+            Mostrando <b>{pedidosFiltrados.length}</b> /{" "}
+            {soloHoy ? `hoy (${totalHoy})` : `total (${pedidos.length})`}
+          </span>
         </div>
-      </div>
+      </header>
 
-      <div className="panel">
-        <div className="toolbar">
-          <div className="searchWrap">
-            <span className="searchIcon">⌕</span>
-            <input
-              className="search"
-              placeholder="Buscar por nombre, teléfono, productos, dirección, ID…"
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-            />
-          </div>
+      <main className="content">
+        {error && <div className="error">{error}</div>}
+        {loading && <div className="loading">Cargando…</div>}
 
-          <div className="count">
-            <span className="pill">
-              {pedidosFiltrados.length} /{" "}
-              {soloHoy ? `hoy (${totalHoy})` : `total (${pedidos.length})`}
-            </span>
-          </div>
-        </div>
-
-        {error && <div className="alert alert-error">{error}</div>}
-        {loading && <div className="loading">Cargando pedidos…</div>}
-
-        {!loading && (
-          <div className="cards">
+        {!loading && !error && (
+          <div className="list">
             {pedidosFiltrados.map((p) => {
               const mod = String(p.modalidad || "").toLowerCase();
-              const isDelivery = mod === "delivery";
+              const badgeClass = mod === "delivery" ? "delivery" : "retiro";
 
               return (
                 <div key={p.id} className="card">
                   <div className="cardHeader">
-                    <div className="cardMeta">
+                    <div>
                       <div className="cardDate">
                         {p.fecha} · <span className="mono">{p.hora}</span>
                       </div>
                       <div className="cardName">{p.nombre}</div>
                     </div>
 
-                    <span
-                      className={`badge ${
-                        isDelivery ? "badge-delivery" : "badge-retiro"
-                      }`}
-                    >
-                      {p.modalidad}
-                    </span>
+                    <span className={`badge ${badgeClass}`}>{p.modalidad}</span>
                   </div>
 
                   <div className="cardBody">
@@ -226,43 +189,25 @@ export default function App() {
 
                     {p.direccion && (
                       <div className="row">
-                        <span className="label">📍 Dirección</span>
+                        <span className="label">📍 Dir</span>
                         <span className="value">{p.direccion}</span>
                       </div>
                     )}
 
-                    <div className="divider" />
-
-                    <div className="row rowTop">
-                      <span className="label">🍽️ Pedido</span>
+                    <div className="row" style={{ marginTop: 8 }}>
+                      <span className="label">🍽️</span>
                       <span className="value productos">{p.productos}</span>
                     </div>
-                  </div>
-
-                  <div className="cardFooter">
-                    <span className="monoSmall">{p.id}</span>
-
-                    <button
-                      className="btn btn-small"
-                      onClick={() =>
-                        navigator.clipboard.writeText(
-                          `Pedido: ${p.productos || ""}\nCliente: ${p.nombre || ""}\nTel: ${p.telefono || ""}\nDirección: ${p.direccion || ""}\nModalidad: ${p.modalidad || ""}`,
-                        )
-                      }
-                      title="Copiar pedido"
-                    >
-                      Copiar
-                    </button>
                   </div>
                 </div>
               );
             })}
 
             {pedidosFiltrados.length === 0 && (
-              <div className="empty">
+              <div className="loading">
                 No hay pedidos para mostrar.
                 {soloHoy && (
-                  <div className="emptyHint">
+                  <div style={{ marginTop: 6, color: "#6b7280" }}>
                     Tip: desactivá “Solo hoy” para ver históricos.
                   </div>
                 )}
@@ -270,10 +215,10 @@ export default function App() {
             )}
           </div>
         )}
-      </div>
+      </main>
 
       <footer className="footer">
-        API: <code>{API_BASE}</code>
+        API: <code>https://laquintaapp-laquinta-api.gzsmus.easypanel.host</code>
       </footer>
     </div>
   );
