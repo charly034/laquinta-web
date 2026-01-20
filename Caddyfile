@@ -1,0 +1,5 @@
+:{$PORT} {
+  root * ./dist
+  encode gzip zstd
+  file_server
+}
