@@ -22,7 +22,6 @@ function todayLabelEsAR() {
 function normalizeToYMD(fecha) {
   if (fecha == null) return "";
 
-  // si viene Date o number
   if (fecha instanceof Date) {
     return fecha.toLocaleDateString("en-CA", {
       timeZone: "America/Argentina/Mendoza",
@@ -48,7 +47,6 @@ function normalizeToYMD(fecha) {
     return `${yyyy}-${mm}-${dd}`;
   }
 
-  // si no se puede interpretar, devolvemos vacío (así no matchea "hoy")
   return "";
 }
 
@@ -80,6 +78,7 @@ export default function App() {
 
   useEffect(() => {
     cargarPedidos();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
@@ -119,27 +118,31 @@ export default function App() {
       });
   }, [pedidos, query, soloHoy, hoyYMD]);
 
+  const totalHoy = useMemo(() => {
+    return pedidos.filter((p) => normalizeToYMD(p.fecha) === hoyYMD).length;
+  }, [pedidos, hoyYMD]);
+
   return (
     <div className="page">
+      {/* TOPBAR (logo - título centrado - acciones) */}
       <div className="topbar">
         <div className="brand">
-          <div className="logo">
-            <img src="./logo.jpg" alt="" />
-          </div>
-          <div>
-            <h1 className="title">La Quinta · Pedidos</h1>
-            <p className="subtitle">
-              {soloHoy ? (
-                <>
-                  Mostrando <b>solo hoy</b> ({hoyLabel})
-                </>
-              ) : (
-                <>
-                  Mostrando <b>todos</b> los pedidos
-                </>
-              )}
-            </p>
-          </div>
+          <img className="brandLogo" src="/logo.jpg" alt="La Quinta" />
+        </div>
+
+        <div className="centerTitle">
+          <h1 className="title">La Quinta · Pedidos</h1>
+          <p className="subtitle">
+            {soloHoy ? (
+              <>
+                Mostrando <b>solo hoy</b> ({hoyLabel})
+              </>
+            ) : (
+              <>
+                Mostrando <b>todos</b> los pedidos
+              </>
+            )}
+          </p>
         </div>
 
         <div className="actions">
@@ -181,11 +184,8 @@ export default function App() {
 
           <div className="count">
             <span className="pill">
-              {pedidosFiltrados.length} / {soloHoy ? "hoy" : "total"}{" "}
-              {soloHoy
-                ? pedidos.filter((p) => normalizeToYMD(p.fecha) === hoyYMD)
-                    .length
-                : pedidos.length}
+              {pedidosFiltrados.length} /{" "}
+              {soloHoy ? `hoy (${totalHoy})` : `total (${pedidos.length})`}
             </span>
           </div>
         </div>
@@ -245,9 +245,11 @@ export default function App() {
                     <button
                       className="btn btn-small"
                       onClick={() =>
-                        navigator.clipboard.writeText(p.productos || "")
+                        navigator.clipboard.writeText(
+                          `Pedido: ${p.productos || ""}\nCliente: ${p.nombre || ""}\nTel: ${p.telefono || ""}\nDirección: ${p.direccion || ""}\nModalidad: ${p.modalidad || ""}`,
+                        )
                       }
-                      title="Copiar productos"
+                      title="Copiar pedido"
                     >
                       Copiar
                     </button>
