@@ -1,4 +1,4 @@
-import { useMemo, useRef, useState } from "react";
+import { useMemo, useState } from "react";
 import "./App.css";
 import { normalizeModalidad } from "./utils/pedido";
 
@@ -12,8 +12,6 @@ import {
 import { HeaderControls } from "./components/HeaderControls";
 import { PedidoCard } from "./components/PedidoCard";
 
-import { useTicketPrint } from "./printing/useTicketPrint";
-
 export default function App() {
   const [soloHoy, setSoloHoy] = useState(true);
   const [autoRefresh, setAutoRefresh] = useState(true);
@@ -25,26 +23,6 @@ export default function App() {
 
   const hoyYMD = todayYMD_Mendoza();
   const hoyLabel = todayLabelEsAR();
-
-  // evita doble print
-  const isPrintingRef = useRef(false);
-
-  // impresión nueva (Android+Windows)
-  const { printTicket, TicketPortal } = useTicketPrint();
-
-  async function onPrint(pedido) {
-    if (isPrintingRef.current) return;
-    isPrintingRef.current = true;
-
-    try {
-      await printTicket(pedido);
-    } finally {
-      // importante: liberamos rápido para no bloquear la app
-      setTimeout(() => {
-        isPrintingRef.current = false;
-      }, 300);
-    }
-  }
 
   const pedidosFiltrados = useMemo(() => {
     const list = Array.isArray(pedidos) ? pedidos : [];
@@ -59,7 +37,7 @@ export default function App() {
 
   const countTotalText = soloHoy
     ? `hoy (${totalHoy})`
-    : `total (${pedidos.length})`;
+    : `total (${Array.isArray(pedidos) ? pedidos.length : 0})`;
 
   function buildPedidoText(p) {
     const lines = [
@@ -81,7 +59,6 @@ export default function App() {
 
   async function copyPedido(p) {
     const text = buildPedidoText(p);
-
     try {
       await navigator.clipboard.writeText(text);
     } catch {
@@ -117,12 +94,7 @@ export default function App() {
         {!loading && !error && (
           <div className="list">
             {pedidosFiltrados.map((p) => (
-              <PedidoCard
-                key={p.id}
-                pedido={p}
-                onPrint={onPrint}
-                onCopy={copyPedido}
-              />
+              <PedidoCard key={p.id} pedido={p} onCopy={copyPedido} />
             ))}
 
             {pedidosFiltrados.length === 0 && (
@@ -142,9 +114,6 @@ export default function App() {
       <footer className="footer">
         API: <code>https://laquintaapp-laquinta-api.gzsmus.easypanel.host</code>
       </footer>
-
-      {/* Render oculto SOLO cuando imprimís */}
-      <TicketPortal />
     </div>
   );
 }
