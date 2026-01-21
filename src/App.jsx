@@ -1,5 +1,6 @@
 import { useMemo, useRef, useState } from "react";
 import "./App.css";
+import { normalizeModalidad } from "./utils/pedido";
 
 import { usePedidos } from "./hooks/usePedidos";
 import {
@@ -41,7 +42,6 @@ export default function App() {
       },
     });
   }
-
   const pedidosFiltrados = useMemo(() => {
     const list = Array.isArray(pedidos) ? pedidos : [];
     if (!soloHoy) return list;
@@ -56,6 +56,43 @@ export default function App() {
   const countTotalText = soloHoy
     ? `hoy (${totalHoy})`
     : `total (${pedidos.length})`;
+  function buildPedidoText(p) {
+    const lines = [
+      "LA QUINTA COMIDAS",
+      normalizeModalidad(p?.modalidad),
+      "------------------------------",
+      `${String(p?.fecha ?? "").trim()} · ${String(p?.hora ?? "").trim()}`.trim(),
+      "------------------------------",
+      `Cliente: ${String(p?.nombre ?? "").trim()}`.trim(),
+      `Tel: ${String(p?.telefono ?? "").trim()}`.trim(),
+      p?.direccion ? `Dir: ${String(p.direccion).trim()}` : null,
+      "------------------------------",
+      String(p?.productos ?? "").trim() || "-",
+      "------------------------------",
+    ].filter(Boolean);
+
+    return lines.join("\n");
+  }
+
+  async function copyPedido(p) {
+    const text = buildPedidoText(p);
+
+    try {
+      await navigator.clipboard.writeText(text);
+      // opcional: toast / estado "copiado"
+    } catch {
+      // fallback
+      const ta = document.createElement("textarea");
+      ta.value = text;
+      ta.style.position = "fixed";
+      ta.style.left = "-9999px";
+      document.body.appendChild(ta);
+      ta.focus();
+      ta.select();
+      document.execCommand("copy");
+      document.body.removeChild(ta);
+    }
+  }
 
   return (
     <div className="page">
@@ -77,7 +114,12 @@ export default function App() {
         {!loading && !error && (
           <div className="list">
             {pedidosFiltrados.map((p) => (
-              <PedidoCard key={p.id} pedido={p} onPrint={onPrint} />
+              <PedidoCard
+                key={p.id}
+                pedido={p}
+                onPrint={onPrint}
+                onCopy={copyPedido}
+              />
             ))}
 
             {pedidosFiltrados.length === 0 && (

@@ -1,7 +1,53 @@
 import { getBadgeClass } from "../utils/pedido";
+import { buildWhatsAppUrl } from "../utils/whatsapp";
 
-export function PedidoCard({ pedido, onPrint }) {
+function buildWhatsAppMessage(p) {
+  const nombre = String(p?.nombre ?? "").trim();
+  const telefono = String(p?.telefono ?? "").trim();
+  const direccion = String(p?.direccion ?? "").trim();
+  const productos = String(p?.productos ?? "").trim();
+  const modalidad = String(p?.modalidad ?? "").trim();
+
+  const lines = [
+    `Hola *${nombre}* 👋`,
+    ``,
+    `Te confirmamos tu pedido en *La Quinta Comidas* 🥘`,
+    ``,
+    `📅 *Fecha:* ${p?.fecha ?? ""} ${p?.hora ?? ""}`.trim(),
+    ``,
+    `👤 *Cliente:* ${nombre}`,
+    `📞 *Tel:* ${telefono}`,
+    direccion ? `📍 *Dirección:* ${direccion}` : null,
+    ``,
+    `🍽️ *Pedido:*`,
+    productos || "-",
+    ``,
+    `🚚 *Modalidad:* ${modalidad}`,
+    ``,
+    `¡Muchas gracias por tu pedido! 🙌`,
+    `Cualquier cosa nos escribís por acá 😊`,
+  ];
+
+  return lines.filter(Boolean).join("\n");
+}
+
+export function PedidoCard({ pedido, onPrint, onCopy }) {
   const badgeClass = getBadgeClass(pedido?.modalidad);
+
+  const waUrl = buildWhatsAppUrl({
+    telefono: pedido?.telefono,
+    text: buildWhatsAppMessage(pedido),
+  });
+
+  const canWhatsApp = Boolean(waUrl);
+
+  function openWhatsApp() {
+    if (!waUrl) {
+      alert("Teléfono inválido para WhatsApp. Revisá el formato.");
+      return;
+    }
+    window.open(waUrl, "_blank", "noopener,noreferrer");
+  }
 
   return (
     <div className="card">
@@ -17,7 +63,7 @@ export function PedidoCard({ pedido, onPrint }) {
           <span className={`badge ${badgeClass}`}>{pedido.modalidad}</span>
 
           <button
-            onClick={() => onPrint(pedido)}
+            onClick={() => onPrint?.(pedido)}
             title="Imprimir ticket (80mm)"
             style={{
               padding: "6px 10px",
@@ -28,6 +74,40 @@ export function PedidoCard({ pedido, onPrint }) {
             }}
           >
             🧾 Imprimir
+          </button>
+
+          <button
+            onClick={() => onCopy?.(pedido)}
+            title="Copiar pedido"
+            style={{
+              padding: "6px 10px",
+              borderRadius: 10,
+              border: "1px solid #e5e7eb",
+              background: "white",
+              cursor: "pointer",
+            }}
+          >
+            📋 Copiar
+          </button>
+
+          <button
+            onClick={openWhatsApp}
+            disabled={!canWhatsApp}
+            title={
+              canWhatsApp
+                ? "Abrir WhatsApp del cliente"
+                : "Teléfono inválido para WhatsApp"
+            }
+            style={{
+              padding: "6px 10px",
+              borderRadius: 10,
+              border: "1px solid #e5e7eb",
+              background: canWhatsApp ? "white" : "#f3f4f6",
+              cursor: canWhatsApp ? "pointer" : "not-allowed",
+              opacity: canWhatsApp ? 1 : 0.6,
+            }}
+          >
+            💬 WhatsApp
           </button>
         </div>
       </div>
