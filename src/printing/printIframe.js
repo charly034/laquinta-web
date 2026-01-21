@@ -17,10 +17,14 @@ export function printHtmlInHiddenIframe(html, { onDone } = {}) {
       iframe.onload = null;
       const win = iframe.contentWindow;
       if (win) win.onafterprint = null;
-    } catch {}
+    } catch (e) {
+      console.warn("printIframe cleanup error:", e);
+    }
     try {
       if (iframe && iframe.parentNode) iframe.parentNode.removeChild(iframe);
-    } catch {}
+    } catch (e) {
+      console.warn("printIframe remove error:", e);
+    }
     onDone?.();
   };
 
@@ -45,8 +49,9 @@ export function printHtmlInHiddenIframe(html, { onDone } = {}) {
           try {
             win.focus();
             win.print();
-          } catch {
+          } catch (e) {
             // si algo falla, igual limpiamos
+            console.warn("print() falló en iframe:", e);
             setTimeout(cleanup, 600);
           }
 
