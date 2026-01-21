@@ -9,8 +9,7 @@ import {
   normalizeToYMD,
 } from "./utils/dates";
 
-import { buildTicket80mmHtml } from "./printing/ticket80mm";
-import { printHtmlInHiddenIframe } from "./printing/printIframe";
+import { printTicket } from "./printing/printTicket";
 
 import { HeaderControls } from "./components/HeaderControls";
 import { PedidoCard } from "./components/PedidoCard";
@@ -30,18 +29,17 @@ export default function App() {
   // evita doble print
   const isPrintingRef = useRef(false);
 
-  function onPrint(pedido) {
+  async function onPrint(pedido) {
     if (isPrintingRef.current) return;
     isPrintingRef.current = true;
 
-    const html = buildTicket80mmHtml(pedido);
-
-    printHtmlInHiddenIframe(html, {
-      onDone: () => {
-        isPrintingRef.current = false;
-      },
-    });
+    try {
+      await printTicket(pedido);
+    } finally {
+      isPrintingRef.current = false;
+    }
   }
+
   const pedidosFiltrados = useMemo(() => {
     const list = Array.isArray(pedidos) ? pedidos : [];
     if (!soloHoy) return list;
@@ -56,6 +54,7 @@ export default function App() {
   const countTotalText = soloHoy
     ? `hoy (${totalHoy})`
     : `total (${pedidos.length})`;
+
   function buildPedidoText(p) {
     const lines = [
       "LA QUINTA COMIDAS",

@@ -1,5 +1,6 @@
 import { getBadgeClass } from "../utils/pedido";
 import { buildWhatsAppUrl } from "../utils/whatsapp";
+import { printTicket } from "../printing/printTicket";
 
 function buildWhatsAppMessage(p) {
   const nombre = String(p?.nombre ?? "").trim();
@@ -30,7 +31,7 @@ function buildWhatsAppMessage(p) {
   return lines.filter(Boolean).join("\n");
 }
 
-export function PedidoCard({ pedido, onPrint, onCopy }) {
+export function PedidoCard({ pedido, onCopy }) {
   const badgeClass = getBadgeClass(pedido?.modalidad);
 
   const waUrl = buildWhatsAppUrl({
@@ -62,7 +63,7 @@ export function PedidoCard({ pedido, onPrint, onCopy }) {
           <span className={`badge ${badgeClass}`}>{pedido.modalidad}</span>
 
           <button
-            onClick={() => onPrint?.(pedido)}
+            onClick={() => printTicket(pedido)}
             title="Imprimir ticket (80mm)"
             style={{
               padding: "6px 10px",
@@ -74,7 +75,6 @@ export function PedidoCard({ pedido, onPrint, onCopy }) {
           >
             🧾 Imprimir
           </button>
-
           <button
             onClick={() => onCopy?.(pedido)}
             title="Copiar pedido"

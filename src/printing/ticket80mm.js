@@ -1,3 +1,4 @@
+// src/printing/ticket80mm.js
 import { escapeHtml } from "../utils/text";
 import { normalizeModalidad } from "../utils/pedido";
 
@@ -32,11 +33,8 @@ export function buildTicket80mmHtml(pedido) {
     }
 
     .top-blank { height: 3.6em; } /* 3 líneas */
-
     .paper { width: 72mm; margin: 0 auto; }
-
     .ticket { font-size: 14px; line-height: 1.35; }
-
     .center { text-align: center; }
     .muted { color: #444; }
 
@@ -55,12 +53,9 @@ export function buildTicket80mmHtml(pedido) {
     }
 
     .sep { border-top: 2px dashed #000; margin: 10px 0; }
-
     .row { display: flex; justify-content: space-between; gap: 10px; }
-
     .label { font-weight: 900; font-size: 14px; }
     .value { text-align: right; font-size: 14px; }
-
     .block { margin-top: 8px; }
 
     .products {
@@ -72,7 +67,6 @@ export function buildTicket80mmHtml(pedido) {
 
     .cut { margin-top: 14px; padding-top: 12px; border-top: 3px dashed #000; }
     .cut .txt { margin-top: 8px; font-size: 14px; font-weight: 900; text-align: center; }
-
     .spacer { height: 12mm; }
   </style>
 </head>
