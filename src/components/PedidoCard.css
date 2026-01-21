@@ -33,13 +33,15 @@
 
   .cardActions {
     display: flex;
-    gap: 4px;
+    gap: 6px;
     flex-wrap: wrap;
+    justify-content: flex-start;
   }
 
   .cardBtn {
-    padding: 4px 8px;
-    font-size: 12px;
+    padding: 6px 10px;
+    font-size: 13px;
+    gap: 4px;
   }
 
   .badge {
@@ -77,31 +79,64 @@
 /* Grupo de botones */
 .cardActions {
   display: flex;
-  gap: 6px;
+  gap: 8px;
+  flex-wrap: wrap;
 }
 
 /* Estilo base de botón */
 .cardBtn {
-  padding: 6px 10px;
-  border-radius: 10px;
-  border: 1px solid #e5e7eb;
-  background: white;
+  padding: 8px 12px;
+  border-radius: 12px;
+  border: none;
+  background: #f3f4f6;
   cursor: pointer;
-  font-size: 13px;
+  font-size: 14px;
+  font-weight: 500;
   display: flex;
   align-items: center;
-  gap: 4px;
-  transition:
-    background 0.15s ease,
-    transform 0.05s ease;
+  gap: 6px;
+  transition: all 0.2s ease;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  min-width: 0;
+  flex-shrink: 0;
 }
 
 .cardBtn:hover {
-  background: #f9fafb;
+  background: #e5e7eb;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
 }
 
 .cardBtn:active {
   transform: scale(0.97);
+}
+
+/* Botones específicos */
+.btn-print {
+  background: #dbeafe;
+  color: #1e40af;
+}
+
+.btn-print:hover {
+  background: #bfdbfe;
+}
+
+.btn-copy {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.btn-copy:hover {
+  background: #bbf7d0;
+}
+
+.btn-whatsapp {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.btn-whatsapp:hover {
+  background: #bbf7d0;
 }
 
 /* Botón deshabilitado (WhatsApp inválido) */
@@ -109,6 +144,7 @@
   background: #f3f4f6;
   cursor: not-allowed;
   opacity: 0.6;
+  color: #9ca3af;
 }
 
 /* Estado copiado */
@@ -116,6 +152,7 @@
   background: #ecfdf5;
   border-color: #10b981;
   color: #065f46;
+  box-shadow: 0 1px 3px rgba(16, 185, 129, 0.2);
 }
 
 /* Badge modalidad (ya tenés clases delivery / retiro) */

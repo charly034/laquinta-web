@@ -71,15 +71,15 @@ export function PedidoCard({ pedido, onCopy }) {
             <button
               onClick={onPrintClick}
               title="Imprimir ticket (80mm)"
-              className="cardBtn"
+              className="cardBtn btn-print"
             >
-              🧾 Imprimir
+              🖨️ Imprimir
             </button>
 
             <button
               onClick={() => onCopy?.(pedido)}
               title="Copiar pedido"
-              className="cardBtn"
+              className="cardBtn btn-copy"
             >
               📋 Copiar
             </button>
@@ -92,7 +92,7 @@ export function PedidoCard({ pedido, onCopy }) {
                   ? "Abrir WhatsApp del cliente"
                   : "Teléfono inválido para WhatsApp"
               }
-              className={`cardBtn ${!canWhatsApp ? "disabled" : ""}`}
+              className={`cardBtn btn-whatsapp ${!canWhatsApp ? "disabled" : ""}`}
             >
               💬 WhatsApp
             </button>
