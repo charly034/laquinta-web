@@ -1,6 +1,6 @@
 import { useRef, useState } from "react";
 import { useReactToPrint } from "react-to-print";
-import { Ticket80mm } from "./Ticket80mm";
+import { buildTicket80mmHtml } from "./ticket80mm";
 
 export function useTicketPrint() {
   const ticketRef = useRef(null);
@@ -14,7 +14,8 @@ export function useTicketPrint() {
   });
 
   async function printTicket(pedido) {
-    // renderizamos el ticket “fuera de pantalla” y luego imprimimos
+    // Renderizamos el ticket “fuera de pantalla” y luego imprimimos
+    // (no abrimos pestañas adicionales)
     setPrintPedido(pedido);
     await new Promise((r) => setTimeout(r, 50));
     doPrint();
@@ -24,9 +25,16 @@ export function useTicketPrint() {
   const TicketPortal = () =>
     printPedido ? (
       <div style={{ position: "fixed", left: "-9999px", top: 0 }}>
-        <Ticket80mm ref={ticketRef} pedido={printPedido} />
+        <div
+          ref={ticketRef}
+          // react-to-print imprimirá el contenido del ref
+          dangerouslySetInnerHTML={{ __html: buildTicket80mmHtml(printPedido) }}
+        />
       </div>
     ) : null;
 
   return { printTicket, TicketPortal };
 }
+
+// UNUSED: `useTicketPrint` is not referenced anywhere in the codebase.
+// Kept exported in case it's needed later; to fully remove it, delete this file.

@@ -67,7 +67,7 @@ export function PedidoCard({ pedido, onCopy }) {
         <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
           <span className={`badge ${badgeClass}`}>{pedido.modalidad}</span>
 
-          {/*           <button
+          <button
             onClick={onPrintClick}
             title="Imprimir ticket (80mm)"
             style={{
@@ -79,7 +79,7 @@ export function PedidoCard({ pedido, onCopy }) {
             }}
           >
             🧾 Imprimir
-          </button> */}
+          </button>
 
           <button
             onClick={() => onCopy?.(pedido)}
