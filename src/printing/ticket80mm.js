@@ -18,8 +18,13 @@ export function buildTicket80mmHtml(pedido) {
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Ticket</title>
+
   <style>
-    @page { size: 80mm auto; margin: 4mm; }
+    /* Tamaño de papel térmico */
+    @page {
+      size: 80mm auto;
+      margin: 4mm;
+    }
 
     html, body {
       margin: 0;
@@ -30,12 +35,30 @@ export function buildTicket80mmHtml(pedido) {
       color: #111;
       -webkit-print-color-adjust: exact;
       print-color-adjust: exact;
-      -webkit-text-size-adjust: 100%;
-      text-rendering: geometricPrecision;
+      background: white;
     }
 
-    .top-blank { height: 3.6em; } /* 3 líneas */
+    /* 🔥 CLAVE: SOLO IMPRIME EL TICKET */
+    @media print {
+      body * {
+        visibility: hidden !important;
+      }
+
+      .paper, .paper * {
+        visibility: visible !important;
+      }
+
+      .paper {
+        position: fixed;
+        left: 0;
+        top: 0;
+      }
+    }
+
+    .top-blank { height: 3.6em; } /* espacio inicial */
+
     .paper { width: 72mm; margin: 0 auto; }
+
     .ticket { font-size: 14px; line-height: 1.35; }
 
     .center { text-align: center; }
@@ -53,9 +76,11 @@ export function buildTicket80mmHtml(pedido) {
       border-left: 0;
       border-right: 0;
       text-transform: uppercase;
+      text-align: center;
     }
 
     .sep { border-top: 2px dashed #000; margin: 10px 0; }
+
     .row { display: flex; justify-content: space-between; gap: 10px; }
 
     .label { font-weight: 900; font-size: 14px; }
@@ -68,6 +93,7 @@ export function buildTicket80mmHtml(pedido) {
       font-size: 15px;
       line-height: 1.4;
       word-break: break-word;
+      white-space: pre-wrap;
     }
 
     .cut { margin-top: 14px; padding-top: 12px; border-top: 3px dashed #000; }
@@ -82,8 +108,10 @@ export function buildTicket80mmHtml(pedido) {
 
   <div class="paper">
     <div class="ticket">
+
       <div class="center brand">LA QUINTA COMIDAS</div>
-      <div class="center mode">${modalidadBig}</div>
+
+      <div class="mode">${modalidadBig}</div>
 
       <div class="sep"></div>
 
@@ -91,6 +119,7 @@ export function buildTicket80mmHtml(pedido) {
         <div class="label">Fecha</div>
         <div class="value">${fecha}</div>
       </div>
+
       <div class="row">
         <div class="label">Hora</div>
         <div class="value">${hora}</div>
@@ -111,9 +140,9 @@ export function buildTicket80mmHtml(pedido) {
       ${
         direccion
           ? `<div class="block">
-        <div class="label">Dirección</div>
-        <div>${direccion}</div>
-      </div>`
+              <div class="label">Dirección</div>
+              <div>${direccion}</div>
+            </div>`
           : ""
       }
 
@@ -126,7 +155,9 @@ export function buildTicket80mmHtml(pedido) {
 
       <div class="center muted" style="margin-top:10px;">¡Gracias!</div>
 
-      <div class="cut"><div class="txt">✂️ CORTE ACÁ</div></div>
+      <div class="cut">
+        <div class="txt">✂️ CORTE ACÁ</div>
+      </div>
 
       <div class="spacer"></div>
     </div>

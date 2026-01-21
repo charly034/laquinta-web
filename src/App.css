@@ -308,3 +308,11 @@ body {
     padding: 4mm !important;
   }
 }
+@media print {
+  body {
+    background: white;
+  }
+  .page {
+    display: none !important;
+  } /* oculta toda tu app si alguien imprime desde la app */
+}
