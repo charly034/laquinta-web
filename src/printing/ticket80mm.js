@@ -30,9 +30,10 @@ export function buildTicket80mmHtml(pedido) {
       margin: 0;
       padding: 0;
       width: 80mm;
-      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
-        "Liberation Mono", "Courier New", monospace;
+      /* Fuente más clara y legible (sistema sans), peso normal */
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
       color: #111;
+      font-weight: 400;
       -webkit-print-color-adjust: exact;
       print-color-adjust: exact;
       background: white;
@@ -57,7 +58,9 @@ export function buildTicket80mmHtml(pedido) {
 
     .top-blank { height: 3.6em; } /* espacio inicial */
 
-    .paper { width: 72mm; margin: 0 auto; }
+     /* Mover ligeramente el contenido a la derecha sin alterar el tamaño
+       del papel: usamos padding-left con box-sizing para no desbordar */
+     .paper { width: 72mm; margin: 0 auto; padding-left: 6mm; box-sizing: border-box; }
 
     .ticket { font-size: 14px; line-height: 1.35; }
 
@@ -83,15 +86,16 @@ export function buildTicket80mmHtml(pedido) {
 
     .row { display: flex; justify-content: space-between; gap: 10px; }
 
-    .label { font-weight: 900; font-size: 14px; }
-    .value { text-align: right; font-size: 14px; }
+    .label { font-weight: 700; font-size: 15px; }
+    .value { text-align: right; font-size: 15px; }
 
     .block { margin-top: 8px; }
 
     .products {
       margin-top: 8px;
-      font-size: 15px;
-      line-height: 1.4;
+      /* Detalle más grande y con mayor legibilidad */
+      font-size: 17px;
+      line-height: 1.45;
       word-break: break-word;
       white-space: pre-wrap;
     }
