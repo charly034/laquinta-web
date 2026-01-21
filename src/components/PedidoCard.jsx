@@ -64,56 +64,39 @@ export function PedidoCard({ pedido, onCopy }) {
           <div className="cardName">{pedido.nombre}</div>
         </div>
 
-        <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
+        <div className="cardHeaderRight">
           <span className={`badge ${badgeClass}`}>{pedido.modalidad}</span>
 
-          <button
-            onClick={onPrintClick}
-            title="Imprimir ticket (80mm)"
-            style={{
-              padding: "6px 10px",
-              borderRadius: 10,
-              border: "1px solid #e5e7eb",
-              background: "white",
-              cursor: "pointer",
-            }}
-          >
-            🧾 Imprimir
-          </button>
+          <div className="cardActions">
+            <button
+              onClick={onPrintClick}
+              title="Imprimir ticket (80mm)"
+              className="cardBtn"
+            >
+              🧾 Imprimir
+            </button>
 
-          <button
-            onClick={() => onCopy?.(pedido)}
-            title="Copiar pedido"
-            style={{
-              padding: "6px 10px",
-              borderRadius: 10,
-              border: "1px solid #e5e7eb",
-              background: "white",
-              cursor: "pointer",
-            }}
-          >
-            📋 Copiar
-          </button>
+            <button
+              onClick={() => onCopy?.(pedido)}
+              title="Copiar pedido"
+              className="cardBtn"
+            >
+              📋 Copiar
+            </button>
 
-          <button
-            onClick={openWhatsApp}
-            disabled={!canWhatsApp}
-            title={
-              canWhatsApp
-                ? "Abrir WhatsApp del cliente"
-                : "Teléfono inválido para WhatsApp"
-            }
-            style={{
-              padding: "6px 10px",
-              borderRadius: 10,
-              border: "1px solid #e5e7eb",
-              background: canWhatsApp ? "white" : "#f3f4f6",
-              cursor: canWhatsApp ? "pointer" : "not-allowed",
-              opacity: canWhatsApp ? 1 : 0.6,
-            }}
-          >
-            💬 WhatsApp
-          </button>
+            <button
+              onClick={openWhatsApp}
+              disabled={!canWhatsApp}
+              title={
+                canWhatsApp
+                  ? "Abrir WhatsApp del cliente"
+                  : "Teléfono inválido para WhatsApp"
+              }
+              className={`cardBtn ${!canWhatsApp ? "disabled" : ""}`}
+            >
+              💬 WhatsApp
+            </button>
+          </div>
         </div>
       </div>
 

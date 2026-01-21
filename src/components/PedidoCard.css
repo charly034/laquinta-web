@@ -18,6 +18,36 @@
   gap: 12px;
 }
 
+/* En móviles, apilar elementos */
+@media (max-width: 600px) {
+  .cardHeader {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+  }
+
+  .cardHeaderRight {
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .cardActions {
+    display: flex;
+    gap: 4px;
+    flex-wrap: wrap;
+  }
+
+  .cardBtn {
+    padding: 4px 8px;
+    font-size: 12px;
+  }
+
+  .badge {
+    font-size: 11px;
+    padding: 3px 6px;
+  }
+}
+
 /* Columna izquierda (fecha + nombre) */
 .cardHeaderLeft {
   display: flex;
