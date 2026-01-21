@@ -9,10 +9,10 @@ import {
   normalizeToYMD,
 } from "./utils/dates";
 
-import { printTicket } from "./printing/printTicket";
-
 import { HeaderControls } from "./components/HeaderControls";
 import { PedidoCard } from "./components/PedidoCard";
+
+import { useTicketPrint } from "./printing/useTicketPrint";
 
 export default function App() {
   const [soloHoy, setSoloHoy] = useState(true);
@@ -29,6 +29,9 @@ export default function App() {
   // evita doble print
   const isPrintingRef = useRef(false);
 
+  // impresión nueva (Android+Windows)
+  const { printTicket, TicketPortal } = useTicketPrint();
+
   async function onPrint(pedido) {
     if (isPrintingRef.current) return;
     isPrintingRef.current = true;
@@ -36,7 +39,10 @@ export default function App() {
     try {
       await printTicket(pedido);
     } finally {
-      isPrintingRef.current = false;
+      // importante: liberamos rápido para no bloquear la app
+      setTimeout(() => {
+        isPrintingRef.current = false;
+      }, 300);
     }
   }
 
@@ -78,9 +84,7 @@ export default function App() {
 
     try {
       await navigator.clipboard.writeText(text);
-      // opcional: toast / estado "copiado"
     } catch {
-      // fallback
       const ta = document.createElement("textarea");
       ta.value = text;
       ta.style.position = "fixed";
@@ -138,6 +142,9 @@ export default function App() {
       <footer className="footer">
         API: <code>https://laquintaapp-laquinta-api.gzsmus.easypanel.host</code>
       </footer>
+
+      {/* Render oculto SOLO cuando imprimís */}
+      <TicketPortal />
     </div>
   );
 }

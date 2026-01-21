@@ -201,3 +201,110 @@ body {
     margin-left: 0;
   }
 }
+/* ===== Ticket 80mm (ReactToPrint) ===== */
+.ticket80 {
+  width: 80mm;
+  margin: 0 auto;
+  padding: 4mm;
+  font-family:
+    ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono",
+    "Courier New", monospace;
+  color: #111;
+  background: #fff;
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+}
+
+.ticket80 .brand {
+  text-align: center;
+  font-size: 18px;
+  font-weight: 900;
+  letter-spacing: 0.6px;
+}
+
+.ticket80 .mode {
+  margin-top: 8px;
+  text-align: center;
+  font-size: 26px;
+  font-weight: 900;
+  letter-spacing: 1.2px;
+  padding: 8px 0;
+  border-top: 3px solid #000;
+  border-bottom: 3px solid #000;
+  text-transform: uppercase;
+}
+
+.ticket80 .sep {
+  border-top: 2px dashed #000;
+  margin: 10px 0;
+}
+
+.ticket80 .row {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.ticket80 .label {
+  font-weight: 900;
+  font-size: 14px;
+}
+
+.ticket80 .value {
+  text-align: right;
+  font-size: 14px;
+}
+
+.ticket80 .block {
+  margin-top: 8px;
+}
+
+.ticket80 .products {
+  margin-top: 8px;
+  font-size: 15px;
+  line-height: 1.4;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.ticket80 .thanks {
+  text-align: center;
+  color: #444;
+  margin-top: 10px;
+}
+
+.ticket80 .cut {
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 3px dashed #000;
+}
+
+.ticket80 .cutTxt {
+  text-align: center;
+  font-size: 14px;
+  font-weight: 900;
+}
+
+.ticket80 .spacer {
+  height: 12mm;
+}
+
+/* Ajustes de impresión */
+@media print {
+  @page {
+    size: 80mm auto;
+    margin: 0;
+  }
+
+  html,
+  body {
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  /* evita que meta márgenes raros */
+  .ticket80 {
+    margin: 0 !important;
+    padding: 4mm !important;
+  }
+}
