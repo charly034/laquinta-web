@@ -11,9 +11,8 @@ function isAndroid() {
 export async function printTicket(pedido, { onDone } = {}) {
   // ANDROID → TEXTO PLANO
   if (isAndroid()) {
-    const text = buildTicket80mmText(pedido);
-    await shareTicketText(text);
-    onDone?.();
+    const html = buildTicket80mmHtml(pedido);
+    printHtmlInHiddenIframe(html, { onDone });
     return;
   }
 
