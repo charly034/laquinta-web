@@ -10,7 +10,8 @@
   gap: 10px;
 }
 
-/* Header de la card */
+/* ================= HEADER ================= */
+
 .cardHeader {
   display: flex;
   justify-content: space-between;
@@ -33,15 +34,10 @@
 
   .cardActions {
     display: flex;
-    gap: 6px;
+    gap: 8px;
     flex-wrap: wrap;
     justify-content: flex-start;
-  }
-
-  .cardBtn {
-    padding: 6px 10px;
-    font-size: 13px;
-    gap: 4px;
+    margin-top: 6px;
   }
 
   .badge {
@@ -73,89 +69,131 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  flex-wrap: wrap; /* en celular bajan a otra línea */
+  flex-wrap: wrap;
 }
+
+/* ================= BODY ================= */
+
+.cardBody {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.cardBody .row {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.cardBody .label {
+  font-weight: 600;
+  color: #374151;
+}
+
+.cardBody .value {
+  color: #111827;
+  word-break: break-word;
+}
+
+/* ================= BOTONES ================= */
 
 /* Grupo de botones */
 .cardActions {
   display: flex;
-  gap: 8px;
+  gap: 10px;
   flex-wrap: wrap;
+  margin-top: 8px;
 }
 
-/* Estilo base de botón */
+/* Botón base */
 .cardBtn {
-  padding: 8px 12px;
-  border-radius: 12px;
-  border: none;
-  background: #f3f4f6;
+  padding: 10px 14px;
+  border-radius: 14px;
+  border: 1px solid rgba(17, 24, 39, 0.08);
+  background: linear-gradient(180deg, #ffffff 0%, #f9fafb 100%);
   cursor: pointer;
   font-size: 14px;
-  font-weight: 500;
-  display: flex;
+  font-weight: 600;
+
+  display: inline-flex;
   align-items: center;
-  gap: 6px;
-  transition: all 0.2s ease;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  justify-content: center;
+  gap: 8px;
+
+  /* CLAVE para que no se salga en mobile */
   min-width: 0;
-  flex-shrink: 0;
+  flex: 1 1 auto;
+  max-width: 100%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+
+  transition:
+    transform 0.15s ease,
+    box-shadow 0.2s ease,
+    background 0.2s ease,
+    border-color 0.2s ease;
+
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.06);
 }
 
 .cardBtn:hover {
-  background: #e5e7eb;
   transform: translateY(-1px);
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 10px 22px rgba(0, 0, 0, 0.1);
+  border-color: rgba(17, 24, 39, 0.12);
 }
 
 .cardBtn:active {
-  transform: scale(0.97);
+  transform: translateY(0);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.06);
 }
 
-/* Botones específicos */
+/* Variantes de botones */
+
 .btn-print {
-  background: #dbeafe;
+  background: linear-gradient(180deg, #eff6ff 0%, #dbeafe 100%);
   color: #1e40af;
+  border-color: rgba(30, 64, 175, 0.15);
 }
 
 .btn-print:hover {
-  background: #bfdbfe;
+  background: linear-gradient(180deg, #dbeafe 0%, #bfdbfe 100%);
 }
 
-.btn-copy {
-  background: #dcfce7;
-  color: #166534;
-}
-
-.btn-copy:hover {
-  background: #bbf7d0;
-}
-
+.btn-copy,
 .btn-whatsapp {
-  background: #dcfce7;
+  background: linear-gradient(180deg, #ecfdf5 0%, #dcfce7 100%);
   color: #166534;
+  border-color: rgba(22, 101, 52, 0.15);
 }
 
+.btn-copy:hover,
 .btn-whatsapp:hover {
-  background: #bbf7d0;
+  background: linear-gradient(180deg, #dcfce7 0%, #bbf7d0 100%);
 }
 
-/* Botón deshabilitado (WhatsApp inválido) */
+/* Botón deshabilitado */
 .cardBtn.disabled {
   background: #f3f4f6;
+  border-color: rgba(17, 24, 39, 0.08);
   cursor: not-allowed;
-  opacity: 0.6;
+  opacity: 0.65;
   color: #9ca3af;
+  box-shadow: none;
+  transform: none;
 }
 
-/* Estado copiado */
+/* Estado copiado / éxito */
 .cardBtn.success {
-  background: #ecfdf5;
-  border-color: #10b981;
+  background: linear-gradient(180deg, #ecfdf5 0%, #d1fae5 100%);
+  border-color: rgba(16, 185, 129, 0.35);
   color: #065f46;
-  box-shadow: 0 1px 3px rgba(16, 185, 129, 0.2);
+  box-shadow: 0 6px 16px rgba(16, 185, 129, 0.15);
 }
 
-/* Badge modalidad (ya tenés clases delivery / retiro) */
+/* ================= BADGES ================= */
+
 .badge {
   padding: 4px 8px;
   border-radius: 999px;
@@ -174,23 +212,15 @@
   color: #075985;
 }
 
-/* Body */
-.cardBody {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
+/* ================= MOBILE BOTONES ================= */
 
-.cardBody .row {
-  display: flex;
-  gap: 6px;
-}
+@media (max-width: 600px) {
+  .cardBtn {
+    padding: 9px 12px;
+    font-size: 13px;
+    gap: 6px;
 
-.cardBody .label {
-  font-weight: 600;
-  color: #374151;
-}
-
-.cardBody .value {
-  color: #111827;
+    /* 2 botones por fila */
+    flex: 1 1 calc(50% - 4px);
+  }
 }
