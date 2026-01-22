@@ -1,6 +1,7 @@
 import { getBadgeClass } from "../utils/pedido";
 import { buildWhatsAppUrl } from "../utils/whatsapp";
 import { printTicket } from "../printing/printTicket";
+import "./PedidoCard.css";
 
 function buildWhatsAppMessage(p) {
   const nombre = String(p?.nombre ?? "").trim();

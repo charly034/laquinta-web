@@ -45,12 +45,12 @@ export function toWhatsAppAR(phone) {
   // - Interior: 2-4 dígitos de área + 6-8 dígitos => típicamente 10 u 11 dígitos
   // Si ya empieza con 549, validamos un poco y devolvemos.
   if (d.startsWith("549")) {
-    return d.length >= 13 && d.length <= 15 ? d : "";
+    return d.length >= 12 && d.length <= 15 ? d : "";
   }
 
   // Si NO trae país, asumimos AR móvil y le agregamos 549
-  // Validación suave: números locales suelen quedar de 10 a 11 dígitos (sin 54/9)
-  if (d.length < 10 || d.length > 11) return "";
+  // Validación suave: números locales suelen quedar de 9 a 11 dígitos (sin 54/9)
+  if (d.length < 9 || d.length > 11) return "";
 
   return `549${d}`;
 }

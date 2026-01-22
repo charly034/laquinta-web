@@ -67,7 +67,14 @@ export function buildTicket80mmHtml(pedido) {
     .center { text-align: center; }
     .muted { color: #444; }
 
-    .brand { font-size: 18px; font-weight: 900; letter-spacing: 0.6px; }
+    .brand { font-size: 26px; font-weight: 900; letter-spacing: 0.6px; }
+
+    .client-name {
+      font-size: 30px;
+      font-weight: 900;
+      text-align: center;
+      margin-bottom: 8px;
+    }
 
     .mode {
       margin-top: 8px;
@@ -82,19 +89,19 @@ export function buildTicket80mmHtml(pedido) {
       text-align: center;
     }
 
-    .sep { border-top: 2px dashed #000; margin: 10px 0; }
+    .sep { border-top: 2px solid #000; margin: 10px 0; }
 
     .row { display: flex; justify-content: space-between; gap: 10px; }
 
-    .label { font-weight: 700; font-size: 15px; }
-    .value { text-align: right; font-size: 15px; }
+    .label { font-weight: 700; font-size: 16px; }
+    .value { text-align: right; font-size: 16px; }
 
-    .block { margin-top: 8px; }
+    .block { margin-top: 8px; font-size: 16px; }
 
     .products {
       margin-top: 8px;
       /* Detalle más grande y con mayor legibilidad */
-      font-size: 17px;
+      font-size: 18px;
       line-height: 1.45;
       word-break: break-word;
       white-space: pre-wrap;
@@ -113,9 +120,15 @@ export function buildTicket80mmHtml(pedido) {
   <div class="paper">
     <div class="ticket">
 
-      <div class="center brand">LA QUINTA COMIDAS</div>
+      <br><br><br>
 
       <div class="mode">${modalidadBig}</div>
+
+      <div class="center client-name">${nombre}</div>
+
+      <div class="sep"></div>
+
+      <div class="center brand">LA QUINTA COMIDAS</div>
 
       <div class="sep"></div>
 
@@ -130,11 +143,6 @@ export function buildTicket80mmHtml(pedido) {
       </div>
 
       <div class="sep"></div>
-
-      <div class="block">
-        <div class="label">Cliente</div>
-        <div>${nombre}</div>
-      </div>
 
       <div class="block">
         <div class="label">Tel</div>
