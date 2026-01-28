@@ -49,8 +49,9 @@ export function toWhatsAppAR(phone) {
   }
 
   // Si NO trae país, asumimos AR móvil y le agregamos 549
-  // Validación suave: números locales suelen quedar de 9 a 11 dígitos (sin 54/9)
-  if (d.length < 9 || d.length > 11) return "";
+  // Validación suave: números locales suelen quedar de 7 a 13 dígitos (sin 54/9)
+  // Permitimos rango más amplio para evitar rechazar números válidos
+  if (d.length < 7 || d.length > 13) return "";
 
   return `549${d}`;
 }
