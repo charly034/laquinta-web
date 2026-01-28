@@ -76,6 +76,10 @@ export default function App() {
 
   return (
     <div className="page">
+      {" "}
+      <div className="logoContainer">
+        <img src="/logo.jpg" alt="La Quinta Comidas" className="logoHeader" />
+      </div>{" "}
       <HeaderControls
         soloHoy={soloHoy}
         setSoloHoy={setSoloHoy}
@@ -86,7 +90,6 @@ export default function App() {
         countTotalText={countTotalText}
         onRefresh={() => refresh()}
       />
-
       <main className="content">
         {error && <div className="error">{error}</div>}
         {loading && <div className="loading">Cargando…</div>}
@@ -110,7 +113,6 @@ export default function App() {
           </div>
         )}
       </main>
-
       <footer className="footer">
         API: <code>https://laquintaapp-laquinta-api.gzsmus.easypanel.host</code>
       </footer>
