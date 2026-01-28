@@ -35,11 +35,6 @@ export function toWhatsAppAR(phone) {
   // Quitar prefijo 0 (troncales): 0 261..., 011..., 0261...
   if (d.startsWith("0")) d = d.slice(1);
 
-  // Quitar "15" después del código de área (formato viejo de celulares)
-  // Ej: 26115xxxxxxx -> 261xxxxxxx
-  // Ej: 1115xxxxxxxx -> 11xxxxxxxx
-  d = d.replace(/^(\d{2,4})15/, "$1");
-
   // A esta altura, lo esperado sin país suele ser:
   // - AMBA: 11 + 8 dígitos => 10 dígitos
   // - Interior: 2-4 dígitos de área + 6-8 dígitos => típicamente 10 u 11 dígitos
