@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "prebuild": "rm -rf dist",
+    "prebuild": "rmdir /s /q dist 2>nul || echo dist not found",
     "start": "npm run build",
     "lint": "eslint .",
     "preview": "vite preview"
@@ -14,7 +14,8 @@
   "dependencies": {
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
-    "react-to-print": "^3.2.0"
+    "react-to-print": "^3.2.0",
+    "sweetalert2": "^11.26.17"
   },
   "devDependencies": {
     "@eslint/js": "^9.39.1",

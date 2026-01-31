@@ -1,6 +1,8 @@
 import { getBadgeClass } from "../utils/pedido";
 import { buildWhatsAppUrl } from "../utils/whatsapp";
 import { printTicket } from "../printing/printTicket";
+import Swal from "sweetalert2";
+import "sweetalert2/dist/sweetalert2.min.css";
 import "./PedidoCard.css";
 
 function buildWhatsAppMessage(p) {
@@ -55,93 +57,116 @@ export function PedidoCard({ pedido, onUpdateStatus }) {
     printTicket(pedido);
   }
 
-  function onToggleStatus() {
-    const current = pedido?.estado || "pendiente";
-    const newStatus = current === "pendiente" ? "preparado" : "pendiente";
-    onUpdateStatus?.(pedido.id, newStatus);
+  function onMarkPrepared() {
+    onUpdateStatus?.(pedido.id, "preparado");
   }
 
-  function onFinalize() {
-    onUpdateStatus?.(pedido.id, "finalizado");
+  function onMarkFinalized() {
+    console.log("onFinalize called for pedido:", pedido.id);
+    Swal.fire({
+      title: "¿Estás seguro?",
+      text: `¿Quieres marcar como finalizado el pedido de ${pedido.nombre}?`,
+      icon: "question",
+      showCancelButton: true,
+      confirmButtonColor: "#10b981",
+      cancelButtonColor: "#6b7280",
+      confirmButtonText: "Sí, finalizar",
+      cancelButtonText: "Cancelar",
+    }).then((result) => {
+      console.log("Swal result:", result);
+      if (result.isConfirmed) {
+        onUpdateStatus?.(pedido.id, "finalizado");
+      }
+    });
   }
+
+  const currentEstado = pedido?.estado || "pendiente";
+  const isFinalized = currentEstado === "finalizado";
 
   return (
     <div className="card">
+      {/* Header simplificado */}
       <div className="cardHeader">
-        <div>
-          <div className="cardDate">
-            {pedido.fecha} · <span className="mono">{pedido.hora}</span>
-          </div>
+        <div className="headerMain">
+          <div className="cardTime">🕒 {pedido.hora}</div>
           <div className="cardName">{pedido.nombre}</div>
+          <span className={`badge ${badgeClass}`}>{pedido.modalidad}</span>
+        </div>
+      </div>
+
+      {/* Estado y acción principal */}
+      {!isFinalized && (
+        <div className="statusSection">
+          <div className="statusDisplay">
+            <span className="statusLabel">Estado:</span>
+            <span className={`statusBadge status-${currentEstado}`}>
+              {currentEstado === "pendiente" ? "🟡 PENDIENTE" : "🔵 PREPARADO"}
+            </span>
+          </div>
+          <div className="primaryAction">
+            {currentEstado === "pendiente" ? (
+              <button onClick={onMarkPrepared} className="btnPrimary">
+                ✅ Marcar preparado
+              </button>
+            ) : (
+              <button onClick={onMarkFinalized} className="btnPrimary">
+                🚚 Finalizar pedido
+              </button>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* Datos del pedido */}
+      <div className="cardBody">
+        <div className="dataSection">
+          <div className="dataRow">
+            <span className="dataLabel">📞</span>
+            <span className="dataValue mono">{pedido.telefono}</span>
+          </div>
+
+          {pedido.direccion && (
+            <div className="dataRow">
+              <span className="dataLabel">📍</span>
+              <span className="dataValue">{pedido.direccion}</span>
+            </div>
+          )}
         </div>
 
-        <div className="cardHeaderRight">
-          <span className={`badge ${badgeClass}`}>{pedido.modalidad}</span>
-          <div className="statusContainer">
-            <span className="statusLabel">Estado:</span>
-            <span
-              className={`statusBadge status-${pedido?.estado || "pendiente"}`}
-            >
-              {pedido?.estado || "pendiente"}
-            </span>
-            <button
-              onClick={onToggleStatus}
-              title="Cambiar entre pendiente y preparado"
-              className="cardBtn btn-toggle"
-            >
-              🔄 Toggle
-            </button>
-            <button
-              onClick={onFinalize}
-              title="Marcar como finalizado"
-              className="cardBtn btn-finalize"
-            >
-              ✅ Finalizar
-            </button>
-          </div>
-
-          <div className="cardActions">
-            <button
-              onClick={onPrintClick}
-              title="Imprimir ticket (80mm)"
-              className="cardBtn btn-print"
-            >
-              🖨️ Imprimir
-            </button>
-
-            <button
-              onClick={openWhatsApp}
-              disabled={!canWhatsApp}
-              title={
-                canWhatsApp
-                  ? "Abrir WhatsApp del cliente"
-                  : "Teléfono inválido para WhatsApp"
-              }
-              className={`cardBtn btn-whatsapp ${!canWhatsApp ? "disabled" : ""}`}
-            >
-              💬 WhatsApp
-            </button>
+        {/* Productos mejorados */}
+        <div className="productsSection">
+          <div className="productsList">
+            {pedido.productos.split("\n").map((line, index) => (
+              <div key={index} className="productItem">
+                {line.trim()}
+              </div>
+            ))}
           </div>
         </div>
       </div>
 
-      <div className="cardBody">
-        <div className="row">
-          <span className="label">📞 Tel</span>
-          <span className="value mono">{pedido.telefono}</span>
-        </div>
+      {/* Acciones secundarias */}
+      <div className="secondaryActions">
+        <button
+          onClick={onPrintClick}
+          title="Imprimir ticket (80mm)"
+          className="btnSecondary"
+        >
+          🖨️ Imprimir
+        </button>
 
-        {pedido.direccion && (
-          <div className="row">
-            <span className="label">📍 Dir</span>
-            <span className="value">{pedido.direccion}</span>
-          </div>
-        )}
-
-        <div className="row" style={{ marginTop: 8 }}>
-          <span className="label">🍽️</span>
-          <span className="value productos">{pedido.productos}</span>
-        </div>
+        <button
+          onClick={openWhatsApp}
+          disabled={!canWhatsApp}
+          title={
+            canWhatsApp
+              ? "Abrir WhatsApp del cliente"
+              : "Teléfono inválido para WhatsApp"
+          }
+          className={`btnSecondary ${!canWhatsApp ? "disabled" : ""}`}
+        >
+          💬 WhatsApp
+        </button>
       </div>
     </div>
   );
