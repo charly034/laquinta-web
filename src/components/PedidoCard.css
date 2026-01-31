@@ -80,14 +80,7 @@
 
 .statusDisplay {
   display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.statusLabel {
-  font-size: 14px;
-  font-weight: 600;
-  color: #374151;
+  justify-content: center;
 }
 
 .statusBadge {
@@ -184,13 +177,15 @@
 /* ================= PRODUCTS ================= */
 
 .productsSection {
-  margin-top: 4px;
+  margin-top: 8px;
+  padding-top: 12px;
+  border-top: 1px solid #f3f4f6;
 }
 
 .productsList {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 8px;
   max-height: 120px;
   overflow-y: auto;
 }
@@ -199,7 +194,7 @@
   font-size: 14px;
   line-height: 1.5;
   color: #374151;
-  padding: 2px 0;
+  padding: 4px 0;
   border-left: 3px solid #e5e7eb;
   padding-left: 8px;
 }
@@ -214,7 +209,7 @@
 .secondaryActions {
   display: flex;
   gap: 8px;
-  padding-top: 8px;
+  padding-top: 12px;
   border-top: 1px solid #f3f4f6;
   margin-top: 8px;
 }
@@ -252,6 +247,30 @@
   cursor: not-allowed;
   opacity: 0.6;
   color: #9ca3af;
+}
+
+/* WhatsApp button - green */
+.btnSecondary:nth-child(2) {
+  background: #25d366;
+  color: white;
+  border-color: #25d366;
+}
+
+.btnSecondary:nth-child(2):hover:not(.disabled) {
+  background: #128c7e;
+  border-color: #128c7e;
+}
+
+/* Print button - neutral gray */
+.btnSecondary:nth-child(1) {
+  background: #6b7280;
+  color: white;
+  border-color: #6b7280;
+}
+
+.btnSecondary:nth-child(1):hover:not(.disabled) {
+  background: #4b5563;
+  border-color: #4b5563;
 }
 
 /* ================= MOBILE ================= */

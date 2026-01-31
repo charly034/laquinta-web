@@ -62,20 +62,36 @@ export function PedidoCard({ pedido, onUpdateStatus }) {
   }
 
   function onMarkFinalized() {
-    console.log("onFinalize called for pedido:", pedido.id);
     Swal.fire({
-      title: "¿Estás seguro?",
-      text: `¿Quieres marcar como finalizado el pedido de ${pedido.nombre}?`,
+      title: "¿Finalizar pedido?",
+      text: `¿Confirmás que el pedido de ${pedido.nombre} está listo para entrega?`,
       icon: "question",
       showCancelButton: true,
       confirmButtonColor: "#10b981",
       cancelButtonColor: "#6b7280",
       confirmButtonText: "Sí, finalizar",
       cancelButtonText: "Cancelar",
-    }).then((result) => {
-      console.log("Swal result:", result);
+    }).then(async (result) => {
       if (result.isConfirmed) {
-        onUpdateStatus?.(pedido.id, "finalizado");
+        try {
+          await onUpdateStatus?.(pedido.id, "finalizado");
+          Swal.fire({
+            title: "¡Pedido finalizado!",
+            text: "El pedido ha sido marcado como completado.",
+            icon: "success",
+            timer: 2000,
+            showConfirmButton: false,
+            toast: true,
+            position: "top-end",
+          });
+        } catch (error) {
+          console.error("Error finalizando pedido:", error);
+          Swal.fire({
+            title: "Error",
+            text: "No se pudo finalizar el pedido. Intentalo de nuevo.",
+            icon: "error",
+          });
+        }
       }
     });
   }
@@ -98,7 +114,6 @@ export function PedidoCard({ pedido, onUpdateStatus }) {
       {!isFinalized && (
         <div className="statusSection">
           <div className="statusDisplay">
-            <span className="statusLabel">Estado:</span>
             <span className={`statusBadge status-${currentEstado}`}>
               {currentEstado === "pendiente" ? "🟡 PENDIENTE" : "🔵 PREPARADO"}
             </span>
