@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { fetchPedidos } from "../services/pedidosApi";
+import { fetchPedidos, updatePedidoStatus } from "../services/pedidosApi";
 
 export function usePedidos({ autoRefresh = true, intervalMs = 15000 } = {}) {
   const [pedidos, setPedidos] = useState([]);
@@ -51,5 +51,17 @@ export function usePedidos({ autoRefresh = true, intervalMs = 15000 } = {}) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [autoRefresh, intervalMs]);
 
-  return { pedidos, loading, error, refresh };
+  async function updateStatus(id, newEstado) {
+    try {
+      await updatePedidoStatus(id, newEstado);
+      setPedidos((prev) =>
+        prev.map((p) => (p.id === id ? { ...p, estado: newEstado } : p)),
+      );
+    } catch (e) {
+      console.error("updatePedidoStatus error:", e);
+      setError(e?.message || "No se pudo actualizar el estado del pedido.");
+    }
+  }
+
+  return { pedidos, loading, error, refresh, updateStatus };
 }

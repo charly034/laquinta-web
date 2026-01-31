@@ -42,7 +42,8 @@
 /* Columna derecha: badge + botones */
 .cardHeaderRight {
   display: flex;
-  align-items: center;
+  flex-direction: column;
+  align-items: flex-end;
   gap: 8px;
   flex-wrap: wrap;
 }
@@ -317,4 +318,66 @@
     font-size: 11px;
     padding: 4px 8px;
   }
+}
+
+/* ================= STATUS ================= */
+
+.statusContainer {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.statusLabel {
+  font-size: 12px;
+  font-weight: 600;
+  color: #6b7280;
+}
+
+.statusBadge {
+  padding: 4px 8px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+.status-pendiente {
+  background: #fef3c7;
+  color: #d97706;
+  border: 1px solid #f59e0b;
+}
+
+.status-preparado {
+  background: #dbeafe;
+  color: #2563eb;
+  border: 1px solid #3b82f6;
+}
+
+.status-finalizado {
+  background: #d1fae5;
+  color: #065f46;
+  border: 1px solid #10b981;
+}
+
+.btn-toggle {
+  background: linear-gradient(180deg, #fef3c7 0%, #fde68a 100%);
+  color: #92400e;
+  border-color: rgba(245, 158, 11, 0.18);
+}
+
+.btn-toggle:hover {
+  background: linear-gradient(180deg, #fde68a 0%, #fcd34d 100%);
+}
+
+.btn-finalize {
+  background: linear-gradient(180deg, #d1fae5 0%, #a7f3d0 100%);
+  color: #065f46;
+  border-color: rgba(16, 185, 129, 0.18);
+}
+
+.btn-finalize:hover {
+  background: linear-gradient(180deg, #a7f3d0 0%, #6ee7b7 100%);
 }

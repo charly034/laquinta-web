@@ -32,7 +32,7 @@ function buildWhatsAppMessage(p) {
   return lines.filter(Boolean).join("\n");
 }
 
-export function PedidoCard({ pedido, onCopy }) {
+export function PedidoCard({ pedido, onUpdateStatus }) {
   const badgeClass = getBadgeClass(pedido?.modalidad);
 
   const waUrl = buildWhatsAppUrl({
@@ -55,6 +55,16 @@ export function PedidoCard({ pedido, onCopy }) {
     printTicket(pedido);
   }
 
+  function onToggleStatus() {
+    const current = pedido?.estado || "pendiente";
+    const newStatus = current === "pendiente" ? "preparado" : "pendiente";
+    onUpdateStatus?.(pedido.id, newStatus);
+  }
+
+  function onFinalize() {
+    onUpdateStatus?.(pedido.id, "finalizado");
+  }
+
   return (
     <div className="card">
       <div className="cardHeader">
@@ -67,6 +77,28 @@ export function PedidoCard({ pedido, onCopy }) {
 
         <div className="cardHeaderRight">
           <span className={`badge ${badgeClass}`}>{pedido.modalidad}</span>
+          <div className="statusContainer">
+            <span className="statusLabel">Estado:</span>
+            <span
+              className={`statusBadge status-${pedido?.estado || "pendiente"}`}
+            >
+              {pedido?.estado || "pendiente"}
+            </span>
+            <button
+              onClick={onToggleStatus}
+              title="Cambiar entre pendiente y preparado"
+              className="cardBtn btn-toggle"
+            >
+              🔄 Toggle
+            </button>
+            <button
+              onClick={onFinalize}
+              title="Marcar como finalizado"
+              className="cardBtn btn-finalize"
+            >
+              ✅ Finalizar
+            </button>
+          </div>
 
           <div className="cardActions">
             <button
@@ -75,14 +107,6 @@ export function PedidoCard({ pedido, onCopy }) {
               className="cardBtn btn-print"
             >
               🖨️ Imprimir
-            </button>
-
-            <button
-              onClick={() => onCopy?.(pedido)}
-              title="Copiar pedido"
-              className="cardBtn btn-copy"
-            >
-              📋 Copiar
             </button>
 
             <button

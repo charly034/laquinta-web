@@ -3,6 +3,8 @@ export function HeaderControls({
   setSoloHoy,
   autoRefresh,
   setAutoRefresh,
+  hideFinalizados,
+  setHideFinalizados,
   hoyLabel,
   countShown,
   countTotalText,
@@ -31,6 +33,15 @@ export function HeaderControls({
             onChange={(e) => setAutoRefresh(e.target.checked)}
           />
           Auto (15s)
+        </label>
+
+        <label className="toggle">
+          <input
+            type="checkbox"
+            checked={!hideFinalizados}
+            onChange={(e) => setHideFinalizados(!e.target.checked)}
+          />
+          Mostrar finalizados
         </label>
 
         <span className="counter">
