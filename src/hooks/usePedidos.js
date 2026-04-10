@@ -4,8 +4,9 @@ import { useAlarmSound } from "./useAlarmSound";
 
 export function usePedidos({
   autoRefresh = true,
-  intervalMs = 15000,
+  pollingIntervalMs = 15000,
   alarmType = "urgent",
+  alarmIntervalMs = 600,
 } = {}) {
   const [pedidos, setPedidos] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -13,7 +14,10 @@ export function usePedidos({
   const [alarmActive, setAlarmActive] = useState(false);
   const [newPedidoForAlert, setNewPedidoForAlert] = useState(null);
   const prevPedidosRef = useRef([]);
-  const { startAlarm, stopAlarm } = useAlarmSound({ alarmType });
+  const { startAlarm, stopAlarm } = useAlarmSound({
+    alarmType,
+    intervalMs: alarmIntervalMs,
+  });
 
   async function refresh({ signal } = {}) {
     try {
@@ -77,14 +81,14 @@ export function usePedidos({
       refresh({ signal: controller.signal });
     };
 
-    const id = setInterval(tick, intervalMs);
+    const id = setInterval(tick, pollingIntervalMs);
 
     return () => {
       controller.abort();
       clearInterval(id);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [autoRefresh, intervalMs]);
+  }, [autoRefresh, pollingIntervalMs]);
 
   async function updateStatus(id, newEstado) {
     try {

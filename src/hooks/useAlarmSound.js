@@ -4,7 +4,7 @@ import { useCallback, useRef } from "react";
  * Hook para reproducir sonidos de alarma looping
  * Soporta múltiples tipos de alarmas profesionales
  */
-export function useAlarmSound({ alarmType = "urgent" } = {}) {
+export function useAlarmSound({ alarmType = "urgent", intervalMs = 600 } = {}) {
   const alarmIntervalRef = useRef(null);
   const audioContextRef = useRef(null);
 
@@ -158,14 +158,14 @@ export function useAlarmSound({ alarmType = "urgent" } = {}) {
       // Reproducir una vez al iniciar
       playAlarmOnce(audioContext);
 
-      // Repetir cada 1 segundo
+      // Repetir cada intervalMs milisegundos
       alarmIntervalRef.current = setInterval(() => {
         playAlarmOnce(audioContext);
-      }, 1000);
+      }, intervalMs);
     } catch (error) {
       console.error("Error al iniciar alarma:", error);
     }
-  }, [playAlarmOnce]);
+  }, [playAlarmOnce, intervalMs]);
 
   const stopAlarm = useCallback(() => {
     if (alarmIntervalRef.current) {

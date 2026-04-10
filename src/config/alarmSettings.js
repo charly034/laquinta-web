@@ -12,8 +12,9 @@ export const ALARM_SETTINGS = {
   // Tipo de alarma activo
   type: "urgent", // Cambiar aquí para usar otro tipo
 
-  // Velocidad de repetición (en ms)
-  intervalMs: 1000,
+  // Velocidad de repetición (en ms) - Más bajo = más frecuente
+  // 600ms es típico de alarmas efectivas
+  intervalMs: 600,
 
   // Descripción de cada tipo
   types: {

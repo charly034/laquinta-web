@@ -29,8 +29,9 @@ export default function App() {
     clearNewPedidoAlert,
   } = usePedidos({
     autoRefresh,
-    intervalMs: ALARM_SETTINGS.intervalMs,
+    pollingIntervalMs: 15000,
     alarmType: ALARM_SETTINGS.type,
+    alarmIntervalMs: ALARM_SETTINGS.intervalMs,
   });
 
   const { pedidosFiltrados, countTotalText } = useFilteredPedidos(
