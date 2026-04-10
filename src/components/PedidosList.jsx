@@ -5,6 +5,7 @@ export function PedidosList({
   loading,
   error,
   updateStatus,
+  stopAlarmSound,
   soloHoy,
 }) {
   if (error) {
@@ -18,7 +19,12 @@ export function PedidosList({
   return (
     <div className="list">
       {pedidosFiltrados.map((p) => (
-        <PedidoCard key={p.id} pedido={p} onUpdateStatus={updateStatus} />
+        <PedidoCard
+          key={p.id}
+          pedido={p}
+          onUpdateStatus={updateStatus}
+          onStopAlarm={stopAlarmSound}
+        />
       ))}
 
       {pedidosFiltrados.length === 0 && (

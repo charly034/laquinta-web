@@ -34,7 +34,7 @@ function buildWhatsAppMessage(p) {
   return lines.filter(Boolean).join("\n");
 }
 
-export function PedidoCard({ pedido, onUpdateStatus }) {
+export function PedidoCard({ pedido, onUpdateStatus, onStopAlarm }) {
   const badgeClass = getBadgeClass(pedido?.modalidad);
 
   const waUrl = buildWhatsAppUrl({
@@ -49,15 +49,18 @@ export function PedidoCard({ pedido, onUpdateStatus }) {
       alert("Teléfono inválido para WhatsApp. Revisá el formato.");
       return;
     }
+    onStopAlarm?.();
     window.open(waUrl, "_blank", "noopener,noreferrer");
   }
 
   function onPrintClick() {
+    onStopAlarm?.();
     console.log("CLICK IMPRIMIR", pedido?.id); // debug
     printTicket(pedido);
   }
 
   function onMarkPrepared() {
+    onStopAlarm?.();
     onUpdateStatus?.(pedido.id, "preparado");
   }
 
@@ -74,6 +77,7 @@ export function PedidoCard({ pedido, onUpdateStatus }) {
     }).then(async (result) => {
       if (result.isConfirmed) {
         try {
+          onStopAlarm?.();
           await onUpdateStatus?.(pedido.id, "finalizado");
           Swal.fire({
             title: "¡Pedido finalizado!",
